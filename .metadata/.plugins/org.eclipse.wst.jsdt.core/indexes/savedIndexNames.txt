@@ -1,0 +1,2 @@
+INDEX VERSION 1.4+C:\4_Sprint_java\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+4082307564.index

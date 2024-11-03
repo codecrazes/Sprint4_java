@@ -1,0 +1,83 @@
+package br.com.fiap.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.fiap.conexoes.ConexaoFactory;
+import br.com.fiap.model.Carro;
+
+public class CarroDAO {
+	
+	public Connection minhaConexao;
+	
+	public CarroDAO() throws ClassNotFoundException, SQLException {
+		super();
+		this.minhaConexao = new ConexaoFactory().conexao();
+	}
+
+	
+	public String inserir(Carro carro) throws SQLException {
+		PreparedStatement stmt = minhaConexao.prepareStatement
+				("insert into CARRO values(?,?,?,?,?)");
+		stmt.setInt(1, carro.getIdModelo());
+		stmt.setString(2, carro.getNome());
+		stmt.setString(3, carro.getAno());
+		stmt.setString(4, carro.getFabricante());
+		stmt.setString(5, carro.getPlaca());
+		stmt.execute();
+		stmt.close();
+		
+		return "Carro cadastrado com sucesso!";
+	}
+
+
+	public String atualizar(Carro carro) throws SQLException {
+		PreparedStatement stmt = minhaConexao.prepareStatement(
+				"UPDATE CARRO SET nome = ?, ano = ?, fabricante = ?, placa = ? WHERE id_modelo = ?");
+		stmt.setString(1, carro.getNome());
+		stmt.setString(2, carro.getAno());
+		stmt.setString(3, carro.getFabricante());
+		stmt.setString(4, carro.getPlaca());
+		stmt.setInt(5, carro.getIdModelo());
+		stmt.execute();
+		stmt.close();
+		
+		return "Carro atualizado com sucesso!";
+	}
+
+	
+	public String excluir(int idModelo) throws SQLException {
+		PreparedStatement stmt = minhaConexao.prepareStatement(
+				"DELETE FROM CARRO WHERE id_modelo = ?");
+		stmt.execute();
+		stmt.close();
+		
+		return "Carro excluído com sucesso!";
+	}
+
+	
+	public List<Carro> listar() throws SQLException {
+		PreparedStatement stmt = minhaConexao.prepareStatement("SELECT * FROM CARRO");
+		ResultSet rs = stmt.executeQuery();
+
+		List<Carro> carros = new ArrayList<>();
+		while (rs.next()) {
+			Carro carro = new Carro();
+			carro.setIdModelo(rs.getInt("idmodelo"));
+			carro.setNome(rs.getString("nome"));
+			carro.setAno(rs.getString("ano"));
+			carro.setFabricante(rs.getString("fabricante"));
+			carro.setPlaca(rs.getString("placa"));
+			carros.add(carro);
+		}
+	
+		rs.close();
+		stmt.close();
+		
+		return carros;
+	}
+}
